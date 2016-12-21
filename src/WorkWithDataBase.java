@@ -1,10 +1,8 @@
 import java.sql.*;
 
 public class WorkWithDataBase {
-    void createDataBase() throws ClassNotFoundException, SQLException {
-        Class.forName("org.h2.Driver");
-        String url = "jdbc:h2:~/myDataBase;IFEXISTS=TRUE";
-        Connection conn = DriverManager.getConnection(url, "sa", "");
+
+    void createDataBase(Connection conn) throws ClassNotFoundException, SQLException {
         Statement st = conn.createStatement();
         st.execute("DROP TABLE EMPLOYEE IF EXISTS");
         st.execute("CREATE TABLE EMPLOYEE(id INT PRIMARY KEY, name VARCHAR(255) NOT NULL);");
@@ -12,10 +10,7 @@ public class WorkWithDataBase {
         st.execute("CREATE TABLE SALARY (id INT PRIMARY KEY, date DATE NOT NULL, value DECIMAL NOT NULL, emp_id INT, FOREIGN KEY (emp_id) REFERENCES EMPLOYEE (id))");
         System.out.println("DataBase create");
     }
-    void addDataInDataBase() throws SQLException, ClassNotFoundException {
-        Class.forName("org.h2.Driver");
-        String url = "jdbc:h2:~/myDataBase;IFEXISTS=TRUE";
-        Connection conn = DriverManager.getConnection(url, "sa", "");
+    void addDataInDataBase(Connection conn) throws SQLException, ClassNotFoundException {
         Statement st = conn.createStatement();
 //        String sql =
 //                "load data infile '~/fileData/EMPLOYEE.txt' \n" +
@@ -37,10 +32,7 @@ public class WorkWithDataBase {
         st.execute("INSERT INTO SALARY VALUES(9, '2016-11-28','120.23',(SELECT id FROM EMPLOYEE WHERE name = 'Andreev'));");
         System.out.println("Data added into DataBase");
     }
-    void showDataInDataBase()throws SQLException, ClassNotFoundException{
-        Class.forName("org.h2.Driver");
-        String url = "jdbc:h2:~/myDataBase;IFEXISTS=TRUE";
-        Connection conn = DriverManager.getConnection(url, "sa", "");
+    void showDataInDataBase(Connection conn)throws SQLException, ClassNotFoundException{
         Statement st = conn.createStatement();
         Statement statement = conn.createStatement();
         ResultSet result = st.executeQuery("SELECT * FROM EMPLOYEE");
@@ -63,10 +55,7 @@ public class WorkWithDataBase {
             System.out.printf("%3s | %10s | %10s | %3s \n",id,date,value,emp_id);
         }
     }
-    void totalSumSalary()throws SQLException, ClassNotFoundException{
-        Class.forName("org.h2.Driver");
-        String url = "jdbc:h2:~/myDataBase;IFEXISTS=TRUE";
-        Connection conn = DriverManager.getConnection(url, "sa", "");
+    void totalSumSalary(Connection conn)throws SQLException, ClassNotFoundException{
         Statement st = conn.createStatement();
         ResultSet resultSet = st.executeQuery("SELECT name, emp_id,  SUM (value) AS TotalSumSalary FROM SALARY, EMPLOYEE WHERE EMPLOYEE.id = SALARY.emp_id  GROUP BY emp_id");
         String totalSumSalary = "", name = "";
