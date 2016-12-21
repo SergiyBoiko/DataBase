@@ -1,0 +1,9 @@
+#ignore folder
+.idea/
+fileData/
+out/
+db/
+#ignore file
+*.zip
+*.class 
+*.xml
