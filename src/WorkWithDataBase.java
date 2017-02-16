@@ -3,16 +3,16 @@ import java.sql.*;
 public class WorkWithDataBase {
 
     void createDataBase(Connection conn) throws ClassNotFoundException, SQLException {
-        try (Statement st = conn.createStatement()) {
+        Statement st = conn.createStatement();
             st.execute("DROP TABLE EMPLOYEE IF EXISTS");
             st.execute("CREATE TABLE EMPLOYEE(id INT PRIMARY KEY, name VARCHAR(255) NOT NULL);");
             st.execute("DROP TABLE SALARY IF EXISTS");
             st.execute("CREATE TABLE SALARY (id INT PRIMARY KEY, date DATE NOT NULL, value DECIMAL NOT NULL, emp_id INT, FOREIGN KEY (emp_id) REFERENCES EMPLOYEE (id))");
             System.out.println("DataBase create");
-        }
+        st.close();
     }
     void addDataInDataBase(Connection conn) throws SQLException, ClassNotFoundException {
-        try (Statement st = conn.createStatement()) {
+        Statement st = conn.createStatement();
             st.execute("INSERT INTO EMPLOYEE VALUES(1, 'Ivanov');");
             st.execute("INSERT INTO EMPLOYEE VALUES(2, 'Petrov');");
             st.execute("INSERT INTO EMPLOYEE VALUES(3, 'Sidorov');");
@@ -28,11 +28,11 @@ public class WorkWithDataBase {
             st.execute("INSERT INTO SALARY VALUES(8, '2016-10-28','3120.23',(SELECT id FROM EMPLOYEE WHERE name = 'Andreev'));");
             st.execute("INSERT INTO SALARY VALUES(9, '2016-11-28','120.23',(SELECT id FROM EMPLOYEE WHERE name = 'Andreev'));");
             System.out.println("Data added into DataBase");
-        }
+        st.close();
     }
     void showDataInDataBase(Connection conn)throws SQLException, ClassNotFoundException {
-        try (Statement st = conn.createStatement();
-             Statement statement=conn.createStatement()){
+        Statement st = conn.createStatement();
+        Statement statement=conn.createStatement();
             ResultSet result = st.executeQuery("SELECT * FROM EMPLOYEE");
             ResultSet resultSet = statement.executeQuery("SELECT * FROM SALARY");
 
@@ -52,11 +52,14 @@ public class WorkWithDataBase {
 
                 System.out.printf("%3s | %10s | %10s | %3s \n", id, date, value, emp_id);
             }
-        }
+        st.close();
+        statement.close();
+        result.close();
+        resultSet.close();
     }
     void totalSumSalary(Connection conn)throws SQLException, ClassNotFoundException {
-        try (Statement st = conn.createStatement()) {
-            ResultSet resultSet = st.executeQuery("SELECT name, emp_id,  SUM (value) AS TotalSumSalary FROM SALARY, EMPLOYEE WHERE EMPLOYEE.id = SALARY.emp_id  GROUP BY emp_id");
+        Statement st = conn.createStatement();
+        ResultSet resultSet = st.executeQuery("SELECT name, emp_id,  SUM (value) AS TotalSumSalary FROM SALARY, EMPLOYEE WHERE EMPLOYEE.id = SALARY.emp_id  GROUP BY emp_id");
             String totalSumSalary = "", name = "";
             while (resultSet.next()) {
                 name = resultSet.getString("name");
@@ -65,6 +68,7 @@ public class WorkWithDataBase {
                 System.out.printf("%10s | %10s \n", name, totalSumSalary);
             }
 
-        }
+        st.close();
+        resultSet.close();
     }
 }
